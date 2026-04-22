@@ -1,5 +1,6 @@
 "use client"
 
+
 import { loginUser } from "../actions"
 import { useRouter } from "next/navigation"
 
@@ -12,7 +13,7 @@ export default function LoginPage(){
         localStorage.setItem("userId", user.id);
         localStorage.setItem("username", user.username);
 
-        router.push("/dashboard");
+        router.push(`/dashboard/${user.id}`);
     }
 
     return (

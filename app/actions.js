@@ -1,6 +1,6 @@
 "use server"
-
-import pool from "./lib/db";
+import "./globals.css";
+import pool from "@/app/lib/db";
 
 
 export async function loginUser(formData) {
