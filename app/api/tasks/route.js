@@ -8,56 +8,56 @@ export async function GET(req) {
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get("userId");
 
-    if (!userId) {
-        return NextResponse.json(
-            { error: "userId is required" },
-            { status: 400 }
-        );
-    }
+        if (!userId) {
+            return NextResponse.json(
+                { error: "userId is required" },
+                { status: 400 }
+            );
+        }
 
-    const result = await pool.query(
-        `SELECT * 
+        const result = await pool.query(
+            `SELECT * 
         FROM tasks 
         WHERE user_id = $1 
         ORDER BY id DESC`,
-        [userId]
-    );
-    
-    return NextResponse.json(result.rows);
-} catch (err) {
-    console.error(err);
-    return NextResponse.json(
-        { error: "Something went wrong" },
-        { status: 500 }
-    );
-}
+            [userId]
+        );
+
+        return NextResponse.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        return NextResponse.json(
+            { error: "Something went wrong" },
+            { status: 500 }
+        );
+    }
 }
 
 //Create task
 export async function POST(req) {
     try {
-    const { title, userId, difficulty } = await req.json();
+        const { title, userId, difficulty, category } = await req.json();
 
-    if(!title || !userId) {
-        return NextResponse.json(
-            { error: "Title and userId are required" },
-            { status: 400 }
-        );
-    }
-
-    let xp = 10;
-    if(difficulty === "Medium") xp = 20;
-    if(difficulty === "Hard") xp = 30;
-
-
-            const result = await pool.query(
-                `INSERT INTO tasks (title, user_id, difficulty,xp) 
-                VALUES ($1, $2, $3, $4) 
-                RETURNING id, title, completed, difficulty, xp`,
-                [title, userId, difficulty, xp]
+        if (!title || !userId) {
+            return NextResponse.json(
+                { error: "Title and userId are required" },
+                { status: 400 }
             );
+        }
 
-            return NextResponse.json(result.rows[0]);
+        let xp = 10;
+        if (difficulty === "Medium") xp = 20;
+        if (difficulty === "Hard") xp = 30;
+
+
+        const result = await pool.query(
+            `INSERT INTO tasks (title, user_id, difficulty, xp, category)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING id, title, completed, difficulty, xp, category`,
+            [title, userId, difficulty, xp, category]
+        );
+
+        return NextResponse.json(result.rows[0]);
 
     } catch (err) {
         console.error(err);
@@ -101,7 +101,7 @@ export async function PUT(req) {
             [id]
         );
 
-            await pool.query(
+        await pool.query(
             `UPDATE users 
             SET xp = xp + $1
             WHERE id = $2`,
