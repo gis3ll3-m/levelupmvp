@@ -1,18 +1,15 @@
 "use client"
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"
 
-export default function LoginPage() {
-
+export default function SignupPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = async (e) => {
+    const handleSignup = async (e) => {
         e.preventDefault();
 
-
-        const res = await fetch("/api/login", {
+        const res = await fetch("/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -23,17 +20,20 @@ export default function LoginPage() {
         const data = await res.json();
 
         if (res.ok) {
+            alert("Signup successful!");
+
             localStorage.setItem("userId", data.userId);
             window.location.href = `/dashboard/${data.userId}`;
         } else {
             alert(data.error);
         }
+
     };
 
     return (
     <div className="loginPage">
-        <form onSubmit={handleLogin} className="loginForm">
-            <h1>LevelUp Login</h1>
+        <form onSubmit={handleSignup} className="loginForm">
+            <h1>Create Account</h1>
 
             <input
                 type="text"
@@ -49,8 +49,9 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
             />
 
-            <button type="submit">Enter</button>
+            <button type="submit">Start Journey</button>
         </form>
+
     </div>
-);
+    );
 }
